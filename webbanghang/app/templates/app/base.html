@@ -1,0 +1,181 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- css -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp" crossorigin="anonymous">
+        <link href="{%static 'app/css/style.css'%}" rel="stylesheet" />
+        <link href="{%static 'app/css/owl.carousel.min.css'%}" rel="stylesheet" />
+        <link href="{%static 'app/css/all.min.css'%}" rel="stylesheet" />
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <link rel="stylesheet" type="text/css" href="{%static 'app/css/main.css'%}" />
+        <!-- js -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.min.js" integrity="sha384-heAjqF+bCxXpCWLa6Zhcp4fu20XoNIA98ecBC1YkdXhszjoejr5y9Q77hIrv8R9i" crossorigin="anonymous"></script>
+        <script src="{%static 'app/js/owl.carousel.min.js'%}"></script>
+        <script src="{%static 'app/js/all.min.js'%}"></script>
+        <script src="{%static 'app/js/myscript.js'%}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script type="text/javascript">
+          var user = '{{request.user}}'
+          function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+       
+        </script>
+        <title> Web Bang Hang Online </title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg bg-body-tertiary">
+            <div class="container-fluid">
+              <a class="navbar-brand" href="{% url 'home'%}">
+                <img src="{%static 'app/images/logo.png'%}" width="60" height = "60"/>                
+              </a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home'%}">Trang chủ</a>
+                  </li>
+                  
+                  <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      Sản phẩm
+                    </a>
+                    <ul class="dropdown-menu">
+                      {% for category in categories %}
+                      <li><a class="dropdown-item" href="{% url 'category' %}?category={{category.slug}}">{{category.name}}</a></li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="{% url 'cart' %}">Cart</a>
+                  </li>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="#">Liên hệ</a>
+                </li>
+                </ul>
+                <form class="d-flex" role="search" method = POST action = "{% url 'search' %}">
+                  {% csrf_token %}
+                  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name = "searched">
+                  <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+              </div>
+              
+
+                <div class="form-inline my-2 my-lg-0" style = "visibility: {{user_login}}">
+                  <span> Hello! {{request.user}}</span>
+                  <span><a href= "{% url 'logout' %}"> Logout </a></span>
+                </div> 
+
+                <div class="form-inline my-2 my-lg-0" style = "visibility: {{user_not_login}}">
+                  <a class="nav-link" href={% url 'login'%}>Đăng nhập</a>
+                  <a class="nav-link" href={% url 'register'%}>Đăng ký</a>
+                </div>
+               
+              
+              <div class='form-inline my-2 my-lg-0'>
+                
+                <a href="{% url 'cart'%}"><img id="cart-icon" src="{% static 'images/cart.png' %}"></a>
+                <p id='cart-total'>{{cartItems}}</p>
+              </div>
+            </div>
+          </nav>
+        <script src="" async defer></script>
+        <!-- main body -->
+        {% block banner_slider %}{% endblock banner_slider %}
+        {% block main_content %}{% endblock main_content %}
+        {% block cart_content %}{% endblock cart_content %}
+        {% block content_checkout %}{% endblock content_checkout %}
+        {% block register %} {% endblock register %}
+        <!-- footer -->
+        <div class="row" style='width:100%'>
+        <footer id="footer" class="footer-wrapper" style='width:100%'>
+          <section class="section footer-section" id="section_1403009796">
+          <div class="bg section-bg fill bg-fill bg-loaded">   
+          <div class="section-content relative">
+      <div class="row" id="row-1925291837" style='width:100%'>
+        <div id="col-228388147" class="col small-12 large-12">
+              <div class="col-inner">
+      <div class="social-icons follow-icons full-width text-center" style="font-size:118%">
+        <a href="#" target="_blank" data-label="Facebook" rel="noopener noreferrer nofollow" class="icon button circle is-outline facebook tooltip" title="Follow on Facebook" aria-label="Follow on Facebook"><i class="icon-facebook"></i></a><a href="#" target="_blank" data-label="Twitter" rel="noopener noreferrer nofollow" class="icon button circle is-outline  twitter tooltip" title="Follow on Twitter" aria-label="Follow on Twitter"><i class="icon-twitter"></i>
+        </a>
+        <a href="mailto:#" data-label="E-mail" rel="nofollow" class="icon button circle is-outline  email tooltip" title="Send us an email" aria-label="Send us an email"><i class="icon-envelop"></i></a><a href="tel:#" target="_blank" data-label="Phone" rel="noopener noreferrer nofollow" class="icon button circle is-outline  phone tooltip" title="Call us" aria-label="Call us"><i class="icon-phone"></i>
+        </a>
+        <a href="#" target="_blank" rel="noopener noreferrer nofollow" data-label="YouTube" class="icon button circle is-outline  youtube tooltip" title="Follow on YouTube" aria-label="Follow on YouTube"><i class="icon-youtube"></i>
+        </a>
+      </div>
+      </div>
+      <div class="row row-small" id="row-372185939" style='width:100%'>
+        <div id="col-990385747" class="col medium-3 small-6 large-3">
+              <div class="col-inner dark">
+      <h3>THÔNG TIN</h3>
+      <ul>
+      <li><a href="https://Webdemo.com">Địa chỉ: 20 Đường Tăng Nhơn Phú, Phước Long B, Thủ Đức, TP.HCM</a></li>
+      <li><a href="https://Webdemo.com">Email: huynhthanhdiep.2000@gmail.com</a></li>
+      <li><a href="https://Webdemo.com">Diện thoại: 0387045475</a></li>
+      <li><a href="https://Webdemo.com">Website: Website bán hàng online</a></li>
+      </ul>
+          </div>
+                </div>
+        <div id="col-779146258" class="col medium-3 small-6 large-3" style='width:100%'>
+              <div class="col-inner dark">
+      <h3>HIỂU VỀ WEBSITE</h3>
+      <ul>
+      <li><a href="https://Webdemo.com">Blogs</a></li>
+      <li><a href="https://Webdemo.com">Hướng dẫn sử dụng</a></li>
+      <li><a href="https://Webdemo.com"></a></li>
+      <li><a href="https://Webdemo.com"></a></li>
+      </ul>
+
+      <style>
+      #section_1403009796 {
+        padding-top: 30px;
+        padding-bottom: 30px;
+        background-color: rgb(57, 0, 35);
+      }
+      #section_1403009796 .ux-shape-divider--top svg {
+        height: 160px;
+        --divider-top-width: 100%;
+      }
+      #section_1403009796 .ux-shape-divider--bottom svg {
+        height: 160px;
+        --divider-width: 100%;
+      }
+      </style>
+        </section>
+      </div>
+      <a href="#top" class="back-to-top button icon invert plain fixed bottom z-1 is-outline hide-for-medium circle active" id="top-link" aria-label="Go to top"><i class="icon-angle-up"></i></a>
+      </footer>
+       <strong> <footer class="container--fluid bg-success text-center fixed-bottom p-2 mt-5" >
+          Copyright © Thanh Điệp 2023
+        </footer>
+      </strong>
+        <script src="{% static 'app/js/cart.js' %}"></script>
+    </body>
+</html>

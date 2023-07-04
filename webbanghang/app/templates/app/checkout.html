@@ -1,0 +1,125 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block content_checkout %}
+     <div class="row" style='width:100%'>
+		<div class="col-lg-6">
+			<div class="box-element" id="form-wrapper">
+				<form id="form">
+					<div id="user-info">
+						<div class="form-field">
+							<input required class="form-control" type="text" name="name" placeholder="Name..">
+						</div>
+						<div class="form-field">
+							<input required class="form-control" type="email" name="email" placeholder="Email..">
+						</div>
+					
+					</div>
+					
+					<div id="shipping-info">
+						
+						<div class="form-field">
+							<input class="form-control" type="text" name="address" placeholder="Số điện thoại">
+						</div>
+						<div class="form-field">
+							<input class="form-control" type="text" name="city" placeholder="Địa chỉ">
+						</div>
+						<div class="form-field">
+							<input class="form-control" type="text" name="state" placeholder="Ghi chú">
+						</div>
+						
+						
+					</div>
+
+					<hr>
+					<input id="form-button" class="btn btn-success btn-block" type="submit" value="Thanh Toán">
+					<hr>
+					<div class="block payment-information">
+						<h4 class="btn btn-red btn-block">Phương thức thanh toán</h4><p class="payment">
+							<head>
+								<meta name="viewport" content="width=device-width, initial-scale=1">
+							</head>
+							<script src="https://www.paypal.com/sdk/js?client-id=test&currency=USD"></script>
+							<!-- Set up a container element for the button -->
+							<div id="paypal-button-container"></div>
+							<script>
+							  paypal.Buttons({
+								// Order is created on the server and the order id is returned
+								createOrder() {
+								  return fetch("/my-server/create-paypal-order", {
+									method: "POST",
+									headers: {
+									  "Content-Type": "application/json",
+									},
+									// use the "body" param to optionally pass additional order information
+									// like product skus and quantities
+									body: JSON.stringify({
+									  cart: [
+										{
+										  sku: "YOUR_PRODUCT_STOCK_KEEPING_UNIT",
+										  quantity: "YOUR_PRODUCT_QUANTITY",
+										},
+									  ],
+									}),
+								  })
+								  .then((response) => response.json())
+								  .then((order) => order.id);
+								},
+								// Finalize the transaction on the server after payer approval
+								onApprove(data) {
+								  return fetch("/my-server/capture-paypal-order", {
+									method: "POST",
+									headers: {
+									  "Content-Type": "application/json",
+									},
+									body: JSON.stringify({
+									  orderID: data.orderID
+									})
+								  })
+								  .then((response) => response.json())
+								  .then((orderData) => {
+									// Successful capture! For dev/demo purposes:
+									console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+									const transaction = orderData.purchase_units[0].payments.captures[0];
+									alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+									// When ready to go live, remove the alert and show a success message within this page. For example:
+									// const element = document.getElementById('paypal-button-container');
+									// element.innerHTML = '<h3>Thank you for your payment!</h3>';
+									// Or go to another URL:  window.location.href = 'thank_you.html';
+								  });
+								}
+							  }).render('#paypal-button-container');
+							</script>
+					</div>
+			</p>
+			
+						
+			</div>
+
+			<br>
+			<div class="box-element hidden" id="payment-info">
+				<small>Paypal Options</small>
+				
+			</div>
+			
+		</div>
+
+		<div class="col-lg-6">
+			<div class="box-element">
+				<a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+				<hr>
+				<h3>Order Summary</h3>
+				<hr>
+				{% for item in items %}
+				<div class="cart-row">
+					<div style="flex:2"><img class="row-image" src="{{item.product.ImageURL}}"></div>
+					<div style="flex:2"><p>{{item.product.name}}</p></div>
+					<div style="flex:1"><p>${{item.product.price | floatformat:3}}</p></div>
+					<div style="flex:1"><p>{{item.quantity}}</p></div>
+				</div>
+				{% endfor %}
+				<h5>Items:   {{order.get_cart_items}}</h5>
+				<h5>Total:   ${{order.get_cart_total | floatformat:3}}</h5>
+			</div>
+		</div>
+	</div>
+{% endblock content_checkout %}
